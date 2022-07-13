@@ -8,8 +8,13 @@ if(is_post_request()) {
   $workout['name'] = $_POST['name'] ?? '';
 
   $result = insert_workout($workout);
-  $new_id = mysqli_insert_id($db);
-  redirect_to(url_for('/fitness/workouts/show.php?id=' . $new_id));
+  if($result === true) {
+    $new_id = mysqli_insert_id($db);
+    redirect_to(url_for('/fitness/workouts/show.php?id=' . $new_id)); 
+  } else {
+      $errors = $result;
+  }
+  
 
 } else {
 
@@ -29,6 +34,8 @@ if(is_post_request()) {
 
     <div class="page new">
         <h1>Create Workout</h1>
+
+        <?php echo display_errors($errors); ?>
 
         <form action="<?php echo url_for('/fitness/workouts/new.php'); ?>" method="post">
             <dl>

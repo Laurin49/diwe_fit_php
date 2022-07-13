@@ -14,9 +14,11 @@ if(is_post_request()) {
     $exercise['content'] = $_POST['content'] ?? '';
 
     $result = update_exercise($exercise);
-
+  
     if ($result === true) {
         redirect_to(url_for('/fitness/exercises/show.php?id=' . $id));
+    } else {
+        $errors = $result;
     }
 
 } else {
@@ -33,7 +35,10 @@ if(is_post_request()) {
     <a class="back-link" href="<?php echo url_for('/fitness/exercises/list.php'); ?>">&laquo; Back to List</a>
 
     <div class="exercise new">
-        <h1>Create Exercise</h1>
+        <h1>Update Exercise</h1>
+
+        <?php echo display_errors($errors); ?>
+
         <form action="<?php echo url_for('/fitness/exercises/edit.php?id=' . h(u($id))); ?>" method="post">
             <dl>
                 <dt>Workout</dt>
