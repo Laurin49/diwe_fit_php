@@ -37,6 +37,8 @@ if(is_post_request()) {
     <div class="exercise new">
         <h1>Create Exercise</h1>
 
+        <?php echo display_errors($errors); ?>
+
         <form action="<?php echo url_for('/fitness/exercises/new.php'); ?>" method="post">
             <dl>
                 <dt>Workout</dt>

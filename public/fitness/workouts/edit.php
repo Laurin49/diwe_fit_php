@@ -14,13 +14,16 @@ if(is_post_request()) {
     $workout['name'] = $_POST['name'] ?? '';
   
     $result = update_workout($workout);
-    redirect_to(url_for('/fitness/workouts/show.php?id=' . $id));
-  
-  } else {
+    if($result === true) {
+        redirect_to(url_for('/fitness/workouts/show.php?id=' . $id));   
+    } else {
+        $errors = $result;
+    }
+} else {
  
     $workout = find_workout_by_id($id);
  
-  }
+}
   
 ?>
 
@@ -33,6 +36,8 @@ if(is_post_request()) {
 
     <div class="workout edit">
         <h1>Edit Workout</h1>
+
+        <?php echo display_errors($errors); ?>
 
         <form action="<?php echo url_for('/fitness/workouts/edit.php?id=' . h(u($id))); ?>" method="post">
             <dl>

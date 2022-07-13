@@ -17,7 +17,7 @@
     global $db;
 
     $sql = "SELECT * FROM workouts ";
-    $sql .= "WHERE id='" . $id . "'";
+    $sql .= "WHERE id='" . db_escape($db, $id) . "'";
     
     $result = mysqli_query($db, $sql);
     confirm_result_set($result);
@@ -31,11 +31,16 @@
 
   function insert_workout($workout) {
     global $db;
+    
+    $errors = validate_workout($workout);
+    if (!empty($errors)) {
+      return $errors;
+    }
 
     $sql = "INSERT INTO workouts ";
     $sql .= "(name) ";
     $sql .= "VALUES (";
-    $sql .= "'" . $workout['name'] . "'";
+    $sql .= "'" . db_escape($db, $workout['name']) . "'";
     $sql .= ")";
     $result = mysqli_query($db, $sql);
     // For INSERT statements, $result is true/false
@@ -51,10 +56,15 @@
 
   function update_workout($workout) {
     global $db;
+        
+    $errors = validate_workout($workout);
+    if (!empty($errors)) {
+      return $errors;
+    }
 
     $sql = "UPDATE workouts SET ";
-    $sql .= "name='" . $workout['name'] . "' ";
-    $sql .= "WHERE id='" . $workout['id'] . "' ";
+    $sql .= "name='" . db_escape($db, $workout['name']) . "' ";
+    $sql .= "WHERE id='" . db_escape($db, $workout['id']) . "' ";
     $sql .= "LIMIT 1";
 
     $result = mysqli_query($db, $sql);
@@ -75,7 +85,7 @@
     global $db;
 
     $sql = "DELETE FROM workouts ";
-    $sql .= "WHERE id='" . $id . "' ";
+    $sql .= "WHERE id='" . db_escape($db, $id) . "' ";
     $sql .= "LIMIT 1";
     $result = mysqli_query($db, $sql);
 
@@ -88,6 +98,16 @@
       db_disconnect($db);
       exit;
     }
+  }
+
+  function validate_workout($workout) {
+    $errors = [];
+    if (is_blank($workout['name'])) {
+      $errors[] = "Name cannot be blank. ";
+    } elseif(!has_length($workout['name'], ['min' => 2, 'max' => 255])) {
+      $errors[] = "Name must be between 2 and 255 characters.";
+    }
+    return $errors;
   }
 
     // Exercises
@@ -107,7 +127,7 @@
     global $db;
 
     $sql = "SELECT * FROM exercises ";
-    $sql .= "WHERE id='" . $id . "'";
+    $sql .= "WHERE id='" . db_escape($db, $id). "'";
     $result = mysqli_query($db, $sql);
     confirm_result_set($result);
     $exercise = mysqli_fetch_assoc($result);
@@ -117,13 +137,18 @@
 
   function insert_exercise($exercise) {
     global $db;
+        
+    $errors = validate_exercise($exercise);
+    if (!empty($errors)) {
+      return $errors;
+    }
 
     $sql = "INSERT INTO exercises ";
     $sql .= "(workout_id, name, content) ";
     $sql .= "VALUES (";
-    $sql .= "'" . $exercise['workout_id'] . "',";
-    $sql .= "'" . $exercise['name'] . "',";
-    $sql .= "'" . $exercise['content'] . "'";
+    $sql .= "'" . db_escape($db, $exercise['workout_id']) . "',";
+    $sql .= "'" . db_escape($db, $exercise['name']) . "',";
+    $sql .= "'" . db_escape($db, $exercise['content']) . "'";
     $sql .= ")";
     $result = mysqli_query($db, $sql);
     // For INSERT statements, $result is true/false
@@ -139,12 +164,17 @@
 
   function update_exercise($exercise) {
     global $db;
+            
+    $errors = validate_exercise($exercise);
+    if (!empty($errors)) {
+      return $errors;
+    }
 
     $sql = "UPDATE exercises SET ";
-    $sql .= "workout_id='" . $exercise['workout_id'] . "', ";
-    $sql .= "name='" . $exercise['name'] . "', ";
-    $sql .= "content='" . $exercise['content'] . "' ";
-    $sql .= "WHERE id='" . $exercise['id'] . "' ";
+    $sql .= "workout_id='" . db_escape($db, $exercise['workout_id']) . "', ";
+    $sql .= "name='" . db_escape($db, $exercise['name']) . "', ";
+    $sql .= "content='" . db_escape($db, $exercise['content']) . "' ";
+    $sql .= "WHERE id='" . db_escape($db, $exercise['id']) . "' ";
     $sql .= "LIMIT 1";
 
     $result = mysqli_query($db, $sql);
@@ -164,7 +194,7 @@
     global $db;
 
     $sql = "DELETE FROM exercises ";
-    $sql .= "WHERE id='" . $id . "' ";
+    $sql .= "WHERE id='" . db_escape($db, $id) . "' ";
     $sql .= "LIMIT 1";
     $result = mysqli_query($db, $sql);
 
@@ -177,6 +207,25 @@
       db_disconnect($db);
       exit;
     }
+  }
+
+  function validate_exercise($exercise) {
+    $errors = [];
+    // workout
+    if(is_blank($exercise['workout_id'])) {
+      $errors[] = "Workout cannot be blank.";
+    }
+    // name
+    if (is_blank($exercise['name'])) {
+      $errors[] = "Name cannot be blank. ";
+    } elseif(!has_length($exercise['name'], ['min' => 2, 'max' => 255])) {
+      $errors[] = "Name must be between 2 and 255 characters.";
+    }
+    // content
+    if(is_blank($exercise['content'])) {
+      $errors[] = "Content cannot be blank.";
+    }
+    return $errors;
   }
 
   ?>
