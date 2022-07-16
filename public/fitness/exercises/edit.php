@@ -1,30 +1,32 @@
-<?php require_once('../../../private/initialize.php'); ?>
+<?php 
+    require_once('../../../private/initialize.php'); 
 
-<?php
-if(!isset($_GET['id'])) {
-    redirect_to(url_for('/fitness/exercises/list.php'));
-}
-$id = $_GET['id'];
+    require_login();
 
-if(is_post_request()) {
-    $exercise = [];
-    $exercise['id'] = $id;
-    $exercise['workout_id'] = $_POST['workout_id'] ?? '';
-    $exercise['name'] = $_POST['name'] ?? '';
-    $exercise['content'] = $_POST['content'] ?? '';
-
-    $result = update_exercise($exercise);
-  
-    if ($result === true) {
-        redirect_to(url_for('/fitness/exercises/show.php?id=' . $id));
-    } else {
-        $errors = $result;
+    if(!isset($_GET['id'])) {
+        redirect_to(url_for('/fitness/exercises/list.php'));
     }
+    $id = $_GET['id'];
 
-} else {
-    $exercise = find_exercise_by_id($id);
-}
+    if(is_post_request()) {
+        $exercise = [];
+        $exercise['id'] = $id;
+        $exercise['workout_id'] = $_POST['workout_id'] ?? '';
+        $exercise['name'] = $_POST['name'] ?? '';
+        $exercise['content'] = $_POST['content'] ?? '';
 
+        $result = update_exercise($exercise);
+    
+        if ($result === true) {
+            $_SESSION['message'] = 'The exercise was updated successfully.';
+            redirect_to(url_for('/fitness/exercises/show.php?id=' . $id));
+        } else {
+            $errors = $result;
+        }
+
+    } else {
+        $exercise = find_exercise_by_id($id);
+    }
 ?>
 
 <?php $page_title = 'Update Exercise'; ?>
@@ -32,8 +34,10 @@ if(is_post_request()) {
 
 <div id="content">
 
-    <a class="back-link" href="<?php echo url_for('/fitness/exercises/list.php'); ?>">&laquo; Back to List</a>
-
+    <a class="back-link"
+        href="<?php echo url_for('/fitness/workouts/show.php?id=' . h(u($exercise['workout_id']))); ?>">
+        &laquo; Back to Workouts
+    </a>
     <div class="exercise new">
         <h1>Update Exercise</h1>
 

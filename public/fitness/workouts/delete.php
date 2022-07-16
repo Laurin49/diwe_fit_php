@@ -2,6 +2,8 @@
 
 require_once('../../../private/initialize.php');
 
+require_login();
+
 if(!isset($_GET['id'])) {
   redirect_to(url_for('/fitness/workouts/list.php'));
 }
@@ -10,6 +12,7 @@ $id = $_GET['id'];
 if(is_post_request()) {
 
   $result = delete_workout($id);
+  $_SESSION['message'] = 'The workout was deleted successfully.';
   redirect_to(url_for('/fitness/workouts/list.php'));
 
 } else {
