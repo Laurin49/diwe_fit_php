@@ -2,6 +2,8 @@
 
 require_once('../../../private/initialize.php');
 
+require_login();
+
 if(is_post_request()) {
 
   $exercise = [];
@@ -12,6 +14,7 @@ if(is_post_request()) {
   $result = insert_exercise($exercise);
   if($result === true) {
     $new_id = mysqli_insert_id($db);
+    $_SESSION['message'] = 'The exercise was created successfully.';
     redirect_to(url_for('/fitness/exercises/show.php?id=' . $new_id));
   } else {
     $errors = $result;
@@ -20,7 +23,7 @@ if(is_post_request()) {
 } else {
 
   $exercise = [];
-  $exercise['workout_id'] = '';
+  $exercise['workout_id'] = $_GET['workout_id'] ?? '0';
   $exercise['name'] = '';
   $exercise['content'] = '';
 
@@ -32,7 +35,10 @@ if(is_post_request()) {
 
 <div id="content">
 
-    <a class="back-link" href="<?php echo url_for('/fitness/exercises/list.php'); ?>">&laquo; Back to List</a>
+    <a class="back-link"
+        href="<?php echo url_for('/fitness/workouts/show.php?id=' . h(u($exercise['workout_id']))); ?>">
+        &laquo; Back to Workouts
+    </a>
 
     <div class="exercise new">
         <h1>Create Exercise</h1>

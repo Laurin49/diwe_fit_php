@@ -1,8 +1,8 @@
-<?php require_once('../../../private/initialize.php'); ?>
+<?php 
+    require_once('../../../private/initialize.php'); 
 
-<?php
-
-  $workout_set = find_all_workouts();
+    require_login();
+    $workout_set = find_all_workouts();
 
 ?>
 
@@ -21,6 +21,7 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Datum</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
@@ -30,6 +31,7 @@
             <tr>
                 <td><?php echo h($workout['id']); ?></td>
                 <td><?php echo h($workout['name']); ?></td>
+                <td><?php echo h($workout['datum']); ?></td>
                 <td><a class="action"
                         href="<?php echo url_for('/fitness/workouts/show.php?id=' . h(u($workout['id']))); ?>">View</a>
                 </td>

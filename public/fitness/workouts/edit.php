@@ -2,6 +2,8 @@
 
 require_once('../../../private/initialize.php');
 
+require_login();
+
 if(!isset($_GET['id'])) {
   redirect_to(url_for('/fitness/workouts/list.php'));
 }
@@ -12,9 +14,11 @@ if(is_post_request()) {
     $workout = [];
     $workout['id'] = $id;
     $workout['name'] = $_POST['name'] ?? '';
+    $workout['datum'] = $_POST['datum'] ?? '';
   
     $result = update_workout($workout);
     if($result === true) {
+        $_SESSION['message'] = 'The workout was updated successfully.';
         redirect_to(url_for('/fitness/workouts/show.php?id=' . $id));   
     } else {
         $errors = $result;
@@ -46,6 +50,10 @@ if(is_post_request()) {
             <dl>
                 <dt>Workout Name</dt>
                 <dd><input type="text" name="name" value="<?php echo h($workout['name']); ?>" /></dd>
+            </dl>
+            <dl>
+                <dt>Workout Datum</dt>
+                <dd><input type="text" name="datum" value="<?php echo h($workout['datum']); ?>" /></dd>
             </dl>
             <div id="operations">
                 <input type="submit" value="Update Workout" />
